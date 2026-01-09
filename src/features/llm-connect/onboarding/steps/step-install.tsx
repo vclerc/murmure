@@ -37,10 +37,30 @@ export const StepInstall = ({ onNext, testConnection }: StepInstallProps) => {
                     t('Could not connect to Ollama. Make sure it is running.')
                 );
             }
-        } catch (err) {
+        } catch {
             setError(t('Connection failed.'));
         } finally {
             setIsTesting(false);
+        }
+    };
+
+    const renderTestButtonContent = () => {
+        if (isTesting) {
+            return (
+                <>
+                    <RefreshCw className="w-4 h-4 animate-spin mr-2" />
+                    {isConnected ? t('Connected') : t('Test Connection')}
+                </>
+            );
+        } else if (isConnected) {
+            return (
+                <>
+                    <CheckCircle2 className="w-4 h-4 mr-2" />
+                    {t('Connected')}
+                </>
+            );
+        } else {
+            return t('Test Connection');
         }
     };
 
@@ -103,14 +123,7 @@ export const StepInstall = ({ onNext, testConnection }: StepInstallProps) => {
                                     'text-emerald-500 hover:bg-emerald-400/10 hover:text-emerald-300'
                             )}
                         >
-                            {isTesting ? (
-                                <RefreshCw className="w-4 h-4 animate-spin mr-2" />
-                            ) : isConnected ? (
-                                <CheckCircle2 className="w-4 h-4 mr-2" />
-                            ) : null}
-                            {isConnected
-                                ? t('Connected')
-                                : t('Test Connection')}
+                            {renderTestButtonContent()}
                         </Page.SecondaryButton>
 
                         {error && (

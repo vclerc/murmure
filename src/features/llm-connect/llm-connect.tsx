@@ -24,7 +24,10 @@ import {
 } from './llm-connect.helpers';
 import { DEFAULT_OLLAMA_URL } from './llm-connect.constants';
 import { RenderKeys } from '@/components/render-keys';
-import { useLLMShortcutState } from '../settings/shortcuts/hooks/use-llm-shortcut-state';
+import {
+    useShortcut,
+    SHORTCUT_CONFIGS,
+} from '../settings/shortcuts/hooks/use-shortcut';
 import { PresetSelector } from './preset-selector/preset-selector';
 import { LLMConnectOnboarding } from './onboarding/llm-connect-onboarding';
 import { Input } from '@/components/input';
@@ -46,7 +49,7 @@ export const LLMConnect = () => {
             ? getDefaultPrompt(i18n.language)
             : settings.prompt;
     const { promptDraft, setPromptDraft } = useLLMPrompt(initialPrompt);
-    const { llmShortcut } = useLLMShortcutState();
+    const { shortcut: llmShortcut } = useShortcut(SHORTCUT_CONFIGS.llm);
 
     const [urlDraft, setUrlDraft] = useState(settings.url);
     const [showModelSelector, setShowModelSelector] = useState(false);
@@ -64,7 +67,7 @@ export const LLMConnect = () => {
                 prompt: defaultPrompt,
             });
             setPromptDraft(defaultPrompt);
-        } catch (error) {
+        } catch {
             toast.error(t('Failed to reset onboarding'));
         }
     };
@@ -73,7 +76,7 @@ export const LLMConnect = () => {
         if (settings.url !== urlDraft) {
             try {
                 await updateSettings({ url: urlDraft });
-            } catch (error) {
+            } catch {
                 toast.error(t('Failed to update URL'));
             }
         }
@@ -82,7 +85,7 @@ export const LLMConnect = () => {
     const handleModelChange = async (model: string) => {
         try {
             await updateSettings({ model });
-        } catch (error) {
+        } catch {
             toast.error(t('Failed to update model'));
         }
     };
@@ -90,7 +93,7 @@ export const LLMConnect = () => {
     const handleSavePrompt = async () => {
         try {
             await updateSettings({ prompt: promptDraft });
-        } catch (error) {
+        } catch {
             toast.error(t('Failed to update prompt'));
         }
     };
@@ -99,7 +102,7 @@ export const LLMConnect = () => {
         try {
             await fetchModels();
             toast.success(t('Models refreshed'), { autoClose: 1500 });
-        } catch (error) {
+        } catch {
             toast.error(t('Failed to fetch models'));
         }
     };
@@ -113,7 +116,7 @@ export const LLMConnect = () => {
             } else {
                 toast.error(t('Connection failed'));
             }
-        } catch (error) {
+        } catch {
             toast.error(t('Connection test failed'));
         }
     };
@@ -314,7 +317,7 @@ export const LLMConnect = () => {
                             <SettingsUI.Separator />
 
                             {/* Prompt Editor */}
-                            <SettingsUI.Item className="!flex-col items-start gap-4">
+                            <SettingsUI.Item className="flex-col! items-start gap-4">
                                 <SettingsUI.Description className="w-full">
                                     <Typography.Title>
                                         {t('Prompt')}
@@ -357,7 +360,7 @@ export const LLMConnect = () => {
                                         <Button
                                             onClick={handleSavePrompt}
                                             variant="outline"
-                                            className="!bg-sky-600 hover:!bg-sky-700 disabled:!bg-zinc-800 text-white"
+                                            className="bg-sky-600! hover:bg-sky-700! disabled:bg-zinc-800! text-white"
                                             size="sm"
                                             disabled={
                                                 promptDraft === settings.prompt
